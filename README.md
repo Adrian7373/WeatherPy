@@ -1,115 +1,136 @@
-# 🌤️ WeatherPy — A Simple Weather Application Built with PySide6
+# 🌦️ WeatherPy
 
-WeatherPy is a clean and responsive **desktop weather application** built with **Python (PySide6)**.
-It fetches real-time weather data using the [WeatherAPI](https://www.weatherapi.com/) and displays it in a user-friendly interface.
+A simple and elegant **Python Weather Application** built using **PySide6 (Qt for Python)** and the **WeatherAPI**.
+This program allows users to enter any city or location name, fetches real-time weather data via an API request, and displays the information inside a modern GUI window.
+
+---
+
+## 🧠 Overview
+
+WeatherPy demonstrates how to integrate **APIs** with a **graphical user interface (GUI)** in Python.
+It retrieves live weather data such as temperature, humidity, condition, and wind speed using **WeatherAPI**, and displays the results dynamically in the window.
 
 ---
 
 ## 🖥️ Features
 
-* 🌍 Fetches live weather data by **city name or location**
-* 🌡️ Displays **temperature, condition, humidity, and wind speed**
-* 🪟 Built with **PySide6 (Qt for Python)** — smooth native desktop UI
-* ⚙️ Includes **menu bar** and **toolbar** for better navigation
-* 🧩 Modular design using **QMainWindow** and **QWidget**
-* 💬 Graceful error handling for invalid requests or no internet connection
+✅ User-friendly GUI made with **PySide6**
+✅ Real-time weather data fetching via **requests**
+✅ Displays detailed weather information:
+
+* Location name (city, region, country)
+* Local time
+* Temperature (with "feels like" temperature)
+* Weather condition
+* Wind speed
+* Humidity
+* Heat index
+
+✅ Error handling for:
+
+* Missing input (no place entered)
+* Network or API errors
+
+✅ Centered main window on screen
 
 ---
 
-## 🧰 Tech Stack
+## 🧩 Technologies Used
 
-| Category      | Technology                                                              |
-| ------------- | ----------------------------------------------------------------------- |
-| Language      | Python 3.x                                                              |
-| GUI Framework | PySide6                                                                 |
-| API           | WeatherAPI ([https://www.weatherapi.com/](https://www.weatherapi.com/)) |
-| HTTP Library  | Requests                                                                |
+* **Python 3**
+* **PySide6** — for GUI
+* **Requests** — for making API calls
+* **WeatherAPI** — for weather data
 
 ---
 
-## 🚀 Getting Started
-
-### 1️⃣ Clone this repository
-
-```bash
-git clone https://github.com/Adrian7373/WeatherPy.git
-cd WeatherPy
-```
-
-### 2️⃣ Install dependencies
-
-```bash
-pip install PySide6 requests
-```
-
-### 3️⃣ Get your API key
-
-Sign up at [WeatherAPI.com](https://www.weatherapi.com/) and copy your **API key**.
-
-Then open the file (for example `weather.py`) and paste your key:
-
-```python
-self.api_key = "your_api_key_here"
-```
-
-### 4️⃣ Run the app
-
-```bash
-python main.py
-```
-
----
-
-## 📸 Screenshot (optional)
-
-*(Add a screenshot of your main window here)*
-
-```markdown
-![WeatherPy Screenshot](assets/screenshot.png)
-```
-
----
-
-## 🧩 Project Structure
+## 📂 File Structure
 
 ```
 WeatherPy/
 │
-├── main.py            # Entry point — launches the app window
-├── weather.py         # Contains the Weather class and API logic
-├── ui_main.py         # UI components (MainWindow, MainWidget)
-├── assets/            # (Optional) images or icons
-└── README.md
+├── main.py             # Entry point of the application
+├── mainwindow.py       # Contains MainWindow, MainWidget, and Weather classes
+└── README.md           # Project documentation
 ```
 
 ---
 
-## 🧠 How It Works
+## ⚙️ How It Works
 
-1. User enters a **city name** or location.
-2. App sends a `GET` request to WeatherAPI using `requests`.
-3. JSON response is parsed and displayed on the GUI.
-4. If the network or API fails, a **QMessageBox** shows an error message.
+1. The user enters a **place name** (e.g., “Tokyo”, “London”, “Manila”).
+2. The app sends a **GET** request to the WeatherAPI endpoint:
 
----
-
-## 📦 Future Improvements
-
-* Add a **5-day forecast** tab
-* Display **weather icons** dynamically
-* Save recent searches
-* Switch between °C / °F
+   ```
+   https://api.weatherapi.com/v1/current.json?q=<place>&key=<your_api_key>
+   ```
+3. The program parses the JSON response using `requests`.
+4. Weather information is displayed in neatly arranged **QLabels** within the main window.
 
 ---
 
-## 🧑‍💻 Author
+## 🚀 How to Run
+
+1. Clone this repository:
+
+   ```bash
+   git clone https://github.com/Adrian7373/WeatherPy.git
+   ```
+2. Navigate into the project folder:
+
+   ```bash
+   cd WeatherPy
+   ```
+3. Install dependencies:
+
+   ```bash
+   pip install PySide6 requests
+   ```
+4. Run the app:
+
+   ```bash
+   python main.py
+   ```
+
+---
+
+## 🧱 Class Overview
+
+### `MainWindow(QMainWindow)`
+
+* The main GUI window.
+* Contains input field (`QLineEdit`), buttons, and display labels.
+* Handles user input and calls the `Weather` class to retrieve data.
+
+### `MainWidget(QWidget)`
+
+* Provides a vertical layout (`QVBoxLayout`) for organizing widgets in the main window.
+
+### `Weather`
+
+* Handles API communication using `requests`.
+* Parses JSON responses and stores the weather information for easy access.
+
+---
+
+## ⚠️ Error Handling
+
+* If the user leaves the input blank → shows a `QMessageBox.information()` popup asking for a place name.
+* If there’s a network issue or API request failure → shows a `QMessageBox.information()` alert with a “Network Error” message.
+
+---
+
+## 📸 Future Improvements
+
+* Add weather icons (sunny, cloudy, rainy, etc.)
+* Display forecast (3-day or 7-day)
+* Improve layout with CSS-style Qt stylesheets
+* Add light/dark mode toggle
+
+---
+
+## 👨‍💻 Author
 
 **Adrian Ablaza**
-2nd Year BSIT Student – Nueva Ecija University of Science and Technology
-Passionate about programming, UI design, and building Python applications.
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License** — feel free to use and modify it.
+📚 IT Student | 🧠 Aspiring Full-Stack Developer
+💻 Passionate about Python, APIs, and modern UI design
