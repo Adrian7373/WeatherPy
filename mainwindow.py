@@ -50,7 +50,7 @@ class MainWidget(QWidget):
 class Weather:
     def __init__(self, placeName):
         self.placeName = placeName
-        self.api_key = '892bd718bae44174a8424529251310'
+        self.api_key = 'your_api_key'
 
         try:
             response = requests.get(
