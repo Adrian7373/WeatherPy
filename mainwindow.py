@@ -1,11 +1,15 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
+from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QLabel,
+                               QLineEdit, QPushButton, QMessageBox, QApplication)
+from PySide6.QtCore import QRect, QPoint
 import requests
+from typing import Dict, Any, Optional
+from config import WEATHER_API_KEY
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, app):
+    def __init__(self, app: QApplication) -> None:
         super().__init__()
-        self.app = app
+        self.app: QApplication = app
         self.setWindowTitle("Weather App")
 
         self.placeLabel = QLabel()
@@ -36,17 +40,19 @@ class MainWindow(QMainWindow):
         self.central_widget.layout.addWidget(self.humidity)
         self.central_widget.layout.addWidget(self.heat_index)
 
-    def retrieveData(self):
-        place = self.placeName.text().strip()
+    def retrieveData(self) -> None:
+        place: str = self.placeName.text().strip()
         if not place:
-            self.central_widget.layout.addWidget(QMessageBox.information(self,
-                                                                         "Error", "Please enter a place name!", QMessageBox.Ok))
+            QMessageBox.information(
+                self, "Error", "Please enter a place name!", QMessageBox.Ok)
+            return
 
         try:
             weather = Weather(place)
-        except SystemExit as e:
-            self.central_widget.layout.addWidget(
-                QMessageBox.information(self, "Error", "Network Error", QMessageBox.Ok))
+        except SystemExit:
+            QMessageBox.information(
+                self, "Error", "Network Error", QMessageBox.Ok)
+            return
 
         self.placeLabel.setText(f"<b>Place:</b> {weather.locationName}, {weather.regionName}, {weather.countryName}"
                                 )
@@ -59,7 +65,7 @@ class MainWindow(QMainWindow):
         self.humidity.setText(f"<b>Humidity:</b> {weather.humidity}%")
         self.heat_index.setText(f"<b>Heat Index:</b> {weather.heatindexC}°C")
 
-    def centerOnScreen(self):
+    def centerOnScreen(self) -> None:
         frame_geom = self.frameGeometry()
         screen_center = self.screen().availableGeometry().center()
         frame_geom.moveCenter(screen_center)
@@ -74,18 +80,29 @@ class MainWidget(QWidget):
 
 
 class Weather:
-    def __init__(self, placeName):
-        self.placeName = placeName
-        self.api_key = 'your_api_key'
+    def __init__(self, placeName: str) -> None:
+        self.placeName: str = placeName
+        self.locationName: str = ""
+        self.regionName: str = ""
+        self.countryName: str = ""
+        self.tempC: float = 0.0
+        self.condition: str = ""
+        self.windSpeed: float = 0.0
+        self.humidity: int = 0
+        self.feelslikeC: float = 0.0
+        self.heatindexC: float = 0.0
+        self.localTime: str = ""
 
         try:
             response = requests.get(
-                f"https://api.weatherapi.com/v1/current.json?q={placeName}&key={self.api_key}")
+                f"https://api.weatherapi.com/v1/current.json?q={placeName}&key={WEATHER_API_KEY}",
+                timeout=10)  # Add 10 second timeout
             response.raise_for_status()
             weather_data = response.json()
         except requests.exceptions.RequestException as e:
             print(f"Error fetching weather data: {e}")
-            raise SystemExit(f"Network Error: could not fetch weather data")
+            raise SystemExit(
+                "Network Error: could not fetch weather data") from e
 
         # Store weather data
         self.locationName = weather_data['location']['name']
