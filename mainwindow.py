@@ -1,14 +1,37 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMenuBar, QMessageBox
 import requests
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, app):
         super().__init__()
+        self.app = app
         self.setWindowTitle("Weather App")
 
         self.central_widget = MainWidget()
         self.setCentralWidget(self.central_widget)
+
+        menu_bar = QMenuBar()
+        app_menu = menu_bar.addMenu("Menu")
+        quit_action = app_menu.addAction("Quit")
+        quit_action.triggered.connect(self.quit_clicked)
+        self.central_widget.layout.addWidget(menu_bar)
+
+    def quit_clicked(self):
+        message = QMessageBox()
+        message.setWindowTitle("Quit App")
+        message.setMinimumSize(700, 200)
+        message.setInformativeText("Do you want to quit the app?")
+        message.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        message.setDefaultButton(QMessageBox.Yes)
+        ret = message.exec()
+        if ret == QMessageBox.Yes:
+            self.quitApp()
+        else:
+            print("user chose cancel")
+
+    def quitApp(self):
+        self.app.quit()
 
     def centerOnScreen(self):
         frame_geom = self.frameGeometry()
@@ -27,7 +50,7 @@ class MainWidget(QWidget):
 class Weather:
     def __init__(self, placeName):
         self.placeName = placeName
-        self.api_key = 'your_api_key'
+        self.api_key = '892bd718bae44174a8424529251310'
 
         try:
             response = requests.get(

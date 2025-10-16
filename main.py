@@ -3,7 +3,7 @@ from mainwindow import MainWindow, Weather
 import sys
 app = QApplication(sys.argv)
 
-window = MainWindow()
+window = MainWindow(app)
 placeName = input("Enter place name: ")
 
 weather = Weather(placeName)
