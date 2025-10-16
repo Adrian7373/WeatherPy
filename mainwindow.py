@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QMenuBar, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
 import requests
 
 
@@ -8,30 +8,56 @@ class MainWindow(QMainWindow):
         self.app = app
         self.setWindowTitle("Weather App")
 
+        self.placeLabel = QLabel()
+        self.localtime = QLabel()
+        self.temparature = QLabel()
+        self.condition = QLabel()
+        self.windspeed = QLabel()
+        self.humidity = QLabel()
+        self.heat_index = QLabel()
         self.central_widget = MainWidget()
+
         self.setCentralWidget(self.central_widget)
+        self.label = QLabel("Enter place name: ")
+        self.placeName = QLineEdit()
+        self.submitButton = QPushButton("Start")
+        self.submitButton.clicked.connect(self.retrieveData
+                                          )
 
-        menu_bar = QMenuBar()
-        app_menu = menu_bar.addMenu("Menu")
-        quit_action = app_menu.addAction("Quit")
-        quit_action.triggered.connect(self.quit_clicked)
-        self.central_widget.layout.addWidget(menu_bar)
+        self.central_widget.layout.addWidget(self.label)
+        self.central_widget.layout.addWidget(self.placeName)
+        self.central_widget.layout.addWidget(self.submitButton)
 
-    def quit_clicked(self):
-        message = QMessageBox()
-        message.setWindowTitle("Quit App")
-        message.setMinimumSize(700, 200)
-        message.setInformativeText("Do you want to quit the app?")
-        message.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
-        message.setDefaultButton(QMessageBox.Yes)
-        ret = message.exec()
-        if ret == QMessageBox.Yes:
-            self.quitApp()
-        else:
-            print("user chose cancel")
+        self.central_widget.layout.addWidget(self.placeLabel)
+        self.central_widget.layout.addWidget(self.localtime)
+        self.central_widget.layout.addWidget(self.temparature)
+        self.central_widget.layout.addWidget(self.condition)
+        self.central_widget.layout.addWidget(self.windspeed)
+        self.central_widget.layout.addWidget(self.humidity)
+        self.central_widget.layout.addWidget(self.heat_index)
 
-    def quitApp(self):
-        self.app.quit()
+    def retrieveData(self):
+        place = self.placeName.text().strip()
+        if not place:
+            self.central_widget.layout.addWidget(QMessageBox.information(self,
+                                                                         "Error", "Please enter a place name!", QMessageBox.Ok))
+
+        try:
+            weather = Weather(place)
+        except SystemExit as e:
+            self.central_widget.layout.addWidget(
+                QMessageBox.information(self, "Error", "Network Error", QMessageBox.Ok))
+
+        self.placeLabel.setText(f"<b>Place:</b> {weather.locationName}, {weather.regionName}, {weather.countryName}"
+                                )
+        self.localtime.setText(f"<b>LocalTime:</b> {weather.localTime}")
+        self.temparature.setText(
+            f"<b>Temperature:</b> {weather.tempC}°C (Feels like: {weather.feelslikeC}°C)"
+        )
+        self.condition.setText(f"<b>Condition:</b> {weather.condition}")
+        self.windspeed.setText(f"<b>Wind Speed:</b> {weather.windSpeed} kph")
+        self.humidity.setText(f"<b>Humidity:</b> {weather.humidity}%")
+        self.heat_index.setText(f"<b>Heat Index:</b> {weather.heatindexC}°C")
 
     def centerOnScreen(self):
         frame_geom = self.frameGeometry()
@@ -50,7 +76,7 @@ class MainWidget(QWidget):
 class Weather:
     def __init__(self, placeName):
         self.placeName = placeName
-        self.api_key = 'your_api_key'
+        self.api_key = '892bd718bae44174a8424529251310'
 
         try:
             response = requests.get(
